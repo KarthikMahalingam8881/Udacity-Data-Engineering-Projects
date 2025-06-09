@@ -4,15 +4,21 @@ from sql_queries import create_table_queries, drop_table_queries
 
 
 def drop_tables(cur, conn):
+    print("Dropping existing tables...")
     for query in drop_table_queries:
+        print(f"Running: {query.strip().split()[2]}")
         cur.execute(query)
         conn.commit()
+    print("All tables dropped.\n")
 
 
 def create_tables(cur, conn):
+    print("Creating tables...")
     for query in create_table_queries:
+        print(f"Running: {query.strip().split()[2]}")
         cur.execute(query)
         conn.commit()
+    print("All tables created.\n")
 
 
 def main():

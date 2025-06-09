@@ -7,7 +7,7 @@ config.read('dwh.cfg')
 
 # DROP TABLES
 
-staging_events_table_drop = "DROP TABle IF EXISTS staging_events;"
+staging_events_table_drop = "DROP TABLE IF EXISTS staging_events;"
 staging_songs_table_drop = "DROP TABLE IF EXISTS staging_songs;"
 songplay_table_drop = "DROP TABLE IF EXISTS songplays;"
 user_table_drop = "DROP TABLE IF EXISTS users;"
@@ -79,7 +79,7 @@ user_table_create = ("""
 CREATE TABLE IF NOT EXISTS users
 (
     userId INTEGER PRIMARY KEY,
-    firsname VARCHAR(50),
+    firstname VARCHAR(50),
     lastname VARCHAR(50),
     gender CHAR(1) ENCODE BYTEDICT,
     level VARCHAR ENCODE BYTEDICT
@@ -131,15 +131,15 @@ SORTKEY (start_time);
 
 staging_events_copy = ("""
 COPY staging_events
-FROM {}
-iam_role {}
-FORMAT AS json {};
+FROM '{}'
+iam_role '{}'
+FORMAT AS json '{}';
 """).format(config['S3']['LOG_DATA'], config['IAM_ROLE']['ARN'], config['S3']['LOG_JSONPATH'])
 
 staging_songs_copy = ("""
 COPY staging_songs
-FROM {}
-iam_role {}
+FROM '{}'
+iam_role '{}'
 FORMAT AS json 'auto';
 """).format(config['S3']['SONG_DATA'], config['IAM_ROLE']['ARN'])
 
@@ -191,10 +191,10 @@ SELECT DISTINCT
        TIMESTAMP 'epoch' + (ts/1000) * INTERVAL '1 second' as start_time,
        EXTRACT(HOUR FROM start_time) AS hour,
        EXTRACT(DAY FROM start_time) AS day,
-       EXTRACT(WEEKS FROM start_time) AS week,
+       EXTRACT(WEEK FROM start_time) AS week,
        EXTRACT(MONTH FROM start_time) AS month,
        EXTRACT(YEAR FROM start_time) AS year,
-       to_char(start_time, 'Day') AS weekday
+       TRIM(to_char(start_time, 'Day')) AS weekday
 FROM staging_events;
 """)
 
